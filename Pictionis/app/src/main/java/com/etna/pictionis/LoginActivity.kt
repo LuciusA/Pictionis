@@ -28,7 +28,7 @@ class LoginActivity : AppCompatActivity() {
         val password = password_edittext_login.text.toString()
 
         if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Veuiller saisir un email et un mot de passe", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Please enter an email and a password", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -47,7 +47,7 @@ class LoginActivity : AppCompatActivity() {
             }
             .addOnFailureListener {
                 Log.d("Main", "Failed to login user: ${it.message}")
-                if (it.message == "The email address is badly formatted.") Toast.makeText(this, "Le format de votre email est incorrect", Toast.LENGTH_SHORT).show()
+                if (it.message == "The email address is badly formatted.") Toast.makeText(this, "The email address is badly formatted.", Toast.LENGTH_SHORT).show()
             }
     }
 }

@@ -12,6 +12,7 @@ class PartiesActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_parties)
+        supportActionBar?.title = "Parties"
 
         verifyUserIsLoggedIn()
     }
@@ -29,7 +30,8 @@ class PartiesActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_new_party -> {
-
+                val intent = Intent(this, NewPartyActivity::class.java)
+                startActivity(intent)
             }
             R.id.menu_sign_out -> {
                 FirebaseAuth.getInstance().signOut()
