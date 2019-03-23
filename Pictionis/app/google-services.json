@@ -23,13 +23,21 @@
           }
         },
         {
+          "client_id": "83908019644-25jhms00st8eau623553q5hf2qdjnjl7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.etna.pictionis",
+            "certificate_hash": "c135124ee8570ed275981b6488338815730bf611"
+          }
+        },
+        {
           "client_id": "83908019644-ni6eb3jfe8h0rrs8clbad3uvqe9grndf.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAYec-U797i5Lcy7F9f7gVYu6JvDZXhoQw"
+          "current_key": "AIzaSyCpCPaw5bMIivbDgmsss_3xiUugkIFWrLo"
         }
       ],
       "services": {

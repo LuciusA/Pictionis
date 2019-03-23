@@ -45,6 +45,10 @@ class MainActivity : AppCompatActivity() {
                 if (!it.isSuccessful) return@addOnCompleteListener
 
                 Log.d("Main", "Login succesfully with user id ${it.result.user.uid}")
+
+                val intent = Intent(this, PartiesActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
             }
             .addOnFailureListener {
                 Log.d("Main", "Failed to create user: ${it.message}")
