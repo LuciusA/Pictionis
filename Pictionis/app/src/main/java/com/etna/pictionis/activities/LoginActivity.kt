@@ -1,13 +1,13 @@
-package com.etna.pictionis
+package com.etna.pictionis.activities
 
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
+import com.etna.pictionis.R
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_login.*
-import kotlinx.android.synthetic.main.activity_main.*
 
 class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,7 +19,9 @@ class LoginActivity : AppCompatActivity() {
         }
 
         create_account_textview_login.setOnClickListener {
-            finish()
+            val intent = Intent(this, MainActivity::class.java)
+            Log.d("MainActivity","Intent $intent")
+            startActivity(intent)
         }
     }
 

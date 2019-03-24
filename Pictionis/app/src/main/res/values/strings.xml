@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">Pictionis</string>
     <string name="email">Email</string>
-    <string name="password">Mot de passe</string>
-    <string name="username">Pseudo</string>
-    <string name="register">Enregistrer</string>
-    <string name="create_account">Créer un compte</string>
-    <string name="already_register">Déjà un compte ?</string>
+    <string name="password">Password</string>
+    <string name="username">Username</string>
+    <string name="register">Register</string>
+    <string name="create_account">Create account</string>
+    <string name="already_register">Already have an account ?</string>
 </resources>

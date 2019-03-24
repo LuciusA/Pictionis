@@ -1,10 +1,11 @@
-package com.etna.pictionis
+package com.etna.pictionis.activities
 
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import com.etna.pictionis.R
 import com.etna.pictionis.models.User
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth

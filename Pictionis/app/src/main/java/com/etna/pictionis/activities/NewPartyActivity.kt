@@ -1,7 +1,8 @@
-package com.etna.pictionis
+package com.etna.pictionis.activities
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import com.etna.pictionis.R
 
 class NewPartyActivity : AppCompatActivity() {
 
