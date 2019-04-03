@@ -55,7 +55,8 @@ class MainActivity : AppCompatActivity() {
             }
             .addOnFailureListener {
                 Log.d("Main", "Failed to create user: ${it.message}")
-                if (it.message == "The email address is badly formatted.") Toast.makeText(this, "The email address is badly formatted.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "${it.message}", Toast.LENGTH_SHORT).show()
+                //if (it.message == "The email address is badly formatted.") Toast.makeText(this, "The email address is badly formatted.", Toast.LENGTH_SHORT).show()
             }
     }
 
@@ -67,14 +68,14 @@ class MainActivity : AppCompatActivity() {
 
         ref.setValue(user)
             .addOnSuccessListener {
-                Log.d("register in db", "Finally we saved the user to Firebase Database")
+                Log.d("Main", "Finally we saved the user to Firebase Database")
 
                 val intent = Intent(this, PartiesActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)
             }
             .addOnFailureListener {
-                Log.d("register in db failed", "Failed to set value to database: ${it.message}")
+                Log.d("Main", "Failed to set value to database: ${it.message}")
             }
     }
 }
