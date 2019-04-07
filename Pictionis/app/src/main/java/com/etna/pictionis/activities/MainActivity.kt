@@ -28,7 +28,6 @@ class MainActivity : AppCompatActivity() {
 
             //launch login activity
             val intent = Intent(this, LoginActivity::class.java)
-            Log.d("MainActivity","Intent $intent")
             startActivity(intent)
         }
     }
@@ -42,19 +41,13 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        Log.d("MainActivity", "Email is $email")
-        Log.d("MainActivity", "Password is: $password")
-
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener{
                 if (!it.isSuccessful) return@addOnCompleteListener
 
-                Log.d("Main", "Login succesfully with user id ${it.result.user.uid}")
-
                 saveUserToFirebaseDatabase()
             }
             .addOnFailureListener {
-                Log.d("Main", "Failed to create user: ${it.message}")
                 Toast.makeText(this, "${it.message}", Toast.LENGTH_SHORT).show()
                 //if (it.message == "The email address is badly formatted.") Toast.makeText(this, "The email address is badly formatted.", Toast.LENGTH_SHORT).show()
             }
@@ -68,14 +61,13 @@ class MainActivity : AppCompatActivity() {
 
         ref.setValue(user)
             .addOnSuccessListener {
-                Log.d("Main", "Finally we saved the user to Firebase Database")
 
                 val intent = Intent(this, PartiesActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)
             }
             .addOnFailureListener {
-                Log.d("Main", "Failed to set value to database: ${it.message}")
+                Log.d("MainActivity", "Failed to set value to database: ${it.message}")
             }
     }
 }

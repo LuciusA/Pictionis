@@ -25,6 +25,7 @@ class NewPartyActivity : AppCompatActivity() {
 
     private fun createParty() {
         val name = party_name_edit.text.toString()
+        val password = party_password_edit.text.toString()
         val uid = FirebaseAuth.getInstance().uid ?: ""
 
         if (name.isEmpty()) {
@@ -32,9 +33,14 @@ class NewPartyActivity : AppCompatActivity() {
             return
         }
 
+        if (password.isEmpty()) {
+            Toast.makeText(this, "Please enter a password", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         val ref = FirebaseDatabase.getInstance().getReference("parties")
         val partyId = ref.push().key ?: ""
-        val party = Party(partyId, name, uid, emptyList())
+        val party = Party(partyId, name, uid, password)
         ref.child(partyId).setValue(party)
             .addOnSuccessListener {
                 val intent = Intent(this, PartiesActivity::class.java)
@@ -42,7 +48,7 @@ class NewPartyActivity : AppCompatActivity() {
                 startActivity(intent)
             }
             .addOnFailureListener {
-                Log.d("register party in db failed", "Failed to set value to database: ${it.message}")
+                Log.d("PartyActivity", "Failed to set value to database: ${it.message}")
             }
     }
 }

@@ -20,7 +20,6 @@ class LoginActivity : AppCompatActivity() {
 
         create_account_textview_login.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
-            Log.d("MainActivity","Intent $intent")
             startActivity(intent)
         }
     }
@@ -34,21 +33,15 @@ class LoginActivity : AppCompatActivity() {
             return
         }
 
-        Log.d("Main", "Email is $email")
-        Log.d("Main", "Password is: $password")
-
         FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
             .addOnCompleteListener{
                 if (!it.isSuccessful) return@addOnCompleteListener
-
-                Log.d("Main", "Login succesfully with user id ${it.result}")
 
                 val intent = Intent(this, PartiesActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)
             }
             .addOnFailureListener {
-                Log.d("Main", "Failed to login user: ${it.message}")
                 if (it.message == "The email address is badly formatted.") Toast.makeText(this, "The email address is badly formatted.", Toast.LENGTH_SHORT).show()
             }
     }

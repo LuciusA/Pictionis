@@ -9,9 +9,16 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
+        <activity android:name=".activities.PartyLogActivity"
+        android:windowSoftInputMode="adjustResize">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".activities.PartiesActivity"/>
+        </activity>
         <activity android:name=".activities.NewPartyActivity">
-            <meta-data android:name="android.support.PARENT_ACTIVITY"
-                       android:value=".activities.PartiesActivity"/>
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".activities.PartiesActivity"/>
         </activity>
         <activity android:name=".activities.PartiesActivity">
             <intent-filter>
