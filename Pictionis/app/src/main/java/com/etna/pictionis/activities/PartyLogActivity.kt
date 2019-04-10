@@ -9,6 +9,9 @@ import android.util.AttributeSet
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.*
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 import com.etna.pictionis.R
 import com.etna.pictionis.models.MessageChat
 import com.etna.pictionis.models.Party
@@ -21,13 +24,14 @@ import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_party_log.*
 import kotlinx.android.synthetic.main.answer_chat_row.view.*
 import kotlinx.android.synthetic.main.answer_chat_row2.view.*
+import java.util.ArrayList
 
-class PartyLogActivity : AppCompatActivity() {
+class PartyLogActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
     val adapter = GroupAdapter<ViewHolder>()
 
-    private val LinesTableRef: DatabaseReference by lazy {
-        FirebaseDatabase.getInstance().reference.child("lines")
+    companion object {
+        var currentParty: Party? = null
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,18 +41,32 @@ class PartyLogActivity : AppCompatActivity() {
         answer_list_recyclerview_partylog.adapter = adapter
 
         val party = intent.getParcelableExtra<Party>(PartiesActivity.PARTY_KEY)
+        currentParty = party
 
         supportActionBar?.title = party.name
 
         listenForMessage()
 
+        prepareSpinner()
+
         send_answer_button_partylog.setOnClickListener {
             sendAnswerMessage()
+        }
+
+        user_spinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener{
+            override fun onItemSelected(parent:AdapterView<*>, view: View, position: Int, id: Long){
+                Log.d("Party", "Spinner selected : ${parent.getItemAtPosition(position)}")
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>){
+                Log.d("Party", "Rien du tout")
+            }
         }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_pictionis, menu)
+
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -57,6 +75,18 @@ class PartyLogActivity : AppCompatActivity() {
             R.id.action_clear -> consumeMenuSelected { removeFirebaseChild() }
             else              -> super.onOptionsItemSelected(item)
         }
+
+    override fun onNothingSelected(parent: AdapterView<*>?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    private val LinesTableRef: DatabaseReference by lazy {
+        FirebaseDatabase.getInstance().getReference("parties").child(currentParty?.id.toString()).child("lines")
+    }
 
     override fun onStart() {
         super.onStart()
@@ -127,23 +157,37 @@ class PartyLogActivity : AppCompatActivity() {
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
                 val messageChat = p0.getValue(MessageChat::class.java)
                 val party = intent.getParcelableExtra<Party>(PartiesActivity.PARTY_KEY)
-                val players = party.players
+                val partyId = party.id
+                //val players = party.players
 
-                if (messageChat != null) {
-                    Log.d("Party", "Ceci esdt le ${messageChat.text}")
+                val ref2 = FirebaseDatabase.getInstance().getReference("/parties/$partyId").child("players")
+                ref2.addValueEventListener(object : ValueEventListener {
+                    override fun onDataChange(p0: DataSnapshot) {
+                        //val partyTest = p0.getValue(Party::class.java)
+                        val players = p0.value as HashMap<String, String>
 
-                    if (messageChat.partyId == party.id) {
-                        if (messageChat.fromId == FirebaseAuth.getInstance().uid) {
-                            adapter.add(AnswerChatFromItem(messageChat.text))
-                        } else {
-                            for ((key, value) in players) {
-                                if (key != FirebaseAuth.getInstance().uid) {
-                                    adapter.add(AnswerChatToItem(messageChat.text, key, value))
+                        if (messageChat != null) {
+                            if (messageChat.partyId == party.id) {
+                                if (messageChat.fromId == FirebaseAuth.getInstance().uid) {
+                                    adapter.add(AnswerChatFromItem(messageChat.text))
+                                } else {
+                                    if (players != null) {
+                                        for ((key, value) in players) {
+                                            if (key != FirebaseAuth.getInstance().uid) {
+                                                adapter.add(AnswerChatToItem(messageChat.text, key, value))
+                                            }
+                                        }
+                                    }
                                 }
                             }
+                            answer_list_recyclerview_partylog.scrollToPosition(adapter.itemCount - 1)
                         }
                     }
-                }
+
+                    override fun onCancelled(p0: DatabaseError) {
+
+                    }
+                })
             }
 
             override fun onCancelled(p0: DatabaseError) {
@@ -178,8 +222,41 @@ class PartyLogActivity : AppCompatActivity() {
         val messageChat = MessageChat(ref.key!!, text, partyId, fromId, "", System.currentTimeMillis() / 1000)
         ref.setValue(messageChat)
             .addOnSuccessListener {
-                Log.d("Party", "Saved our message: ${ref.key}")
+                answer_edittext_partylog.text.clear()
+                answer_list_recyclerview_partylog.scrollToPosition(adapter.itemCount - 1)
             }
+    }
+
+    private fun prepareSpinner() {
+        val users: MutableList<String> = ArrayList()
+
+        val ref = FirebaseDatabase.getInstance().getReference("/users")
+        ref.addChildEventListener(object : ChildEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+
+            }
+
+            override fun onChildAdded(p0: DataSnapshot, p1: String?) {
+                val user = p0.getValue(User::class.java)!!
+                users.add(user.username!!)
+            }
+
+            override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+
+            }
+
+            override fun onChildMoved(p0: DataSnapshot, p1: String?) {
+
+            }
+
+            override fun onChildRemoved(p0: DataSnapshot) {
+
+            }
+        })
+
+        val aa = ArrayAdapter(this, android.R.layout.simple_spinner_item, users)
+        aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        user_spinner.adapter = aa
     }
 }
 

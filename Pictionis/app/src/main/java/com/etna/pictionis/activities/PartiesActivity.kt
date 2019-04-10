@@ -10,10 +10,6 @@ import android.util.Log
 import com.etna.pictionis.R
 import com.etna.pictionis.models.Party
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
@@ -26,11 +22,16 @@ import android.view.View
 import android.view.Window
 import android.widget.EditText
 import android.widget.Toast
+import com.etna.pictionis.models.MessageChat
 import com.etna.pictionis.models.User
+import com.google.firebase.database.*
+import kotlinx.android.synthetic.main.activity_party_log.*
 import kotlinx.android.synthetic.main.dialog_password.*
 
 
 class PartiesActivity : AppCompatActivity() {
+
+    val adapter = GroupAdapter<ViewHolder>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,11 +42,11 @@ class PartiesActivity : AppCompatActivity() {
 
         verifyUserIsLoggedIn()
 
-        val adapter = GroupAdapter<ViewHolder>()
-
         recyclerview_parties.adapter = adapter
 
         fetchParties()
+
+        //listenForParty()
     }
 
     companion object {
@@ -71,15 +72,11 @@ class PartiesActivity : AppCompatActivity() {
 
     private fun fetchParties() {
         val ref = FirebaseDatabase.getInstance().getReference("/parties")
-        ref.addListenerForSingleValueEvent(object: ValueEventListener {
-            override fun onDataChange(p0: DataSnapshot) {
-                val adapter = GroupAdapter<ViewHolder>()
-
-                p0.children.forEach{
-                    val party = it.getValue(Party::class.java)
-                    if (party != null) {
-                        adapter.add(PartyItem(party))
-                    }
+        ref.addChildEventListener(object : ChildEventListener {
+            override fun onChildAdded(p0: DataSnapshot, p1: String?) {
+                val party = p0.getValue(Party::class.java)
+                if (party != null) {
+                    adapter.add(PartyItem(party))
                 }
 
                 adapter.setOnItemClickListener { item, view ->
@@ -133,6 +130,18 @@ class PartiesActivity : AppCompatActivity() {
                 }
 
                 recyclerview_parties.adapter = adapter
+            }
+
+            override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+
+            }
+
+            override fun onChildMoved(p0: DataSnapshot, p1: String?) {
+
+            }
+
+            override fun onChildRemoved(p0: DataSnapshot) {
+
             }
 
             override fun onCancelled(p0: DatabaseError) {
